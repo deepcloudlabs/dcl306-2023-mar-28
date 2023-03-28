@@ -2,6 +2,13 @@ import React from "react";
 import Container from "./component/common/Container";
 import FormGroup from "./component/common/FormGroup";
 import Badge from "./component/common/Badge";
+import createSecret from "./utils/GameUtils";
+import Move from "./model/Move";
+import Table from "./component/common/table/Table";
+import TableHeader from "./component/common/table/TableHeader";
+import TableBody from "./component/common/table/TableBody";
+import EvaluateMove from "./component/mastermind/EvaluateMove";
+import ProgressBar from "./component/common/ProgressBar";
 
 // Stateful Component -> Class
 class Mastermind extends React.PureComponent {
@@ -9,14 +16,16 @@ class Mastermind extends React.PureComponent {
         super(props, context);
         this.state = {
             game: {
-                secret: 549,
+                secret: createSecret(3),
                 guess: 123,
                 level: 3,
                 lives: 3,
                 tries: 0,
                 maxTries: 10,
                 moves: [],
-                counter: 60
+                counter: 60,
+                pbColorCounter: "bg-primary",
+                pbWidthCounter: "100%"
             },
             statistics: {
                 wins: 0,
@@ -27,28 +36,42 @@ class Mastermind extends React.PureComponent {
     }
 
     countDown2 = () => {
-        console.log(`beginning: ${JSON.stringify(this.state)}`)
         let counter = this.state.game.counter;
         counter--;
-        this.setState({game: {...this.state.game, counter}}, ()=>{
-            console.log(`callback: ${JSON.stringify(this.state)}`)
+        // Note: this.setState is an async function
+        this.setState({game: {...this.state.game, counter}}, () => {
+            console.log(`after callback: ${JSON.stringify(this.state)}`)
         })
+    }
+    initializeGame = (game) => {
+        game.secret = createSecret(game.level);
+        game.tries = 0;
+        game.moves = [];
+        game.counter = 60;
     }
 
     countDown = () => {
         console.log(`beginning: ${JSON.stringify(this.state)}`)
         let game = {...this.state.game};
         game.counter--;
-        this.setState({game}, ()=>{
+        game.pbWidthCounter = Math.round(game.counter * 5 / 3).toString().concat("%");
+        if (game.counter <= 30)
+            game.pbColorCounter = "bg-danger";
+        else if (game.counter <= 45)
+            game.pbColorCounter = "bg-warning";
+        else
+            game.pbColorCounter = "bg-primary";
+        this.setState({game}, () => {
             console.log(`callback: ${JSON.stringify(this.state)}`)
-        })
+        });
     }
+
     componentDidMount() {
         this.timerId = setInterval(this.countDown, 1_000);
 
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
         clearInterval(this.timerId);
     }
 
@@ -58,9 +81,27 @@ class Mastermind extends React.PureComponent {
     }
 
     play = () => {
-        let game = {...this.state.game};
-        let statistics = {...this.state.statistics};
+        const statistics = {...this.state.statistics};
+        const game = {...this.state.game};
         game.tries++;
+        if (game.guess === game.secret) {
+            game.level++;
+            if (game.level > 10) {
+                //TODO: player wins the game
+            } else {
+                this.initializeGame(game);
+                game.lives++;
+            }
+        } else if (game.tries > game.maxTries) {
+            if (game.lives === 0) {
+                //TODO: player loses the game
+            } else {
+                game.lives--;
+                this.initializeGame(game);
+            }
+        } else { // player has more tries
+            game.moves.push(new Move(game.guess, game.secret));
+        }
         this.setState({game, statistics});
     }
 
@@ -69,8 +110,8 @@ class Mastermind extends React.PureComponent {
             <Container title="Mastermind">
                 <FormGroup label="Game Level" id="level">
                     <Badge id="level"
-                         bgColor="bg-success"
-                         value={this.state.game.level}/>
+                           bgColor="bg-success"
+                           value={this.state.game.level}/>
                 </FormGroup>
                 <FormGroup label="Lives" id="lives">
                     <Badge id="lives"
@@ -80,7 +121,8 @@ class Mastermind extends React.PureComponent {
                 <FormGroup id="tries" label="Tries">
                     <Badge id="tries"
                            bgColor="bg-danger"
-                           value={this.state.game.tries}/> out of
+                           value={this.state.game.tries}/>
+                    <span className="form-label"> out of </span>
                     <Badge id="maxTries"
                            bgColor="bg-info"
                            value={this.state.game.maxTries}/>
@@ -89,6 +131,10 @@ class Mastermind extends React.PureComponent {
                     <Badge id="counter"
                            bgColor="bg-info"
                            value={this.state.game.counter}/>
+                    <ProgressBar id="counter"
+                                 value={this.state.game.counter}
+                                 pbColor={this.state.game.pbColorCounter}
+                                 pbWidth={this.state.game.pbWidthCounter}></ProgressBar>
                 </FormGroup>
                 <FormGroup label="Guess" id="guess">
                     <input type="text"
@@ -98,7 +144,25 @@ class Mastermind extends React.PureComponent {
                            onChange={this.handleInputChange}
                            value={this.state.game.guess}></input>
                     <button className="btn btn-success"
-                    onClick={this.play}>Play</button>
+                            onClick={this.play}>Play
+                    </button>
+                </FormGroup>
+                <FormGroup label="Moves">
+                    <Table id="moves">
+                        <TableHeader columns="ID,Guess,Message,Evaluation"/>
+                        <TableBody>
+                            {
+                                this.state.game.moves.map((move, index) =>
+                                    <tr key={move.guess}>
+                                        <td>{index + 1}</td>
+                                        <td>{move.guess}</td>
+                                        <td>{move.message}</td>
+                                        <td><EvaluateMove move={move}/></td>
+                                    </tr>
+                                )
+                            }
+                        </TableBody>
+                    </Table>
                 </FormGroup>
             </Container>
         );
