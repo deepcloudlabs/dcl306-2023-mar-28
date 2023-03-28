@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise #3</title>
+    <script type="text/javascript">
+        function fun() {
+            if (Math.random() < 0.5)
+                throw "something is wrong!";
+            return 42;
+        }
+        async function sun() {
+            if (Math.random() < 0.5)
+                throw "something is wrong!";
+            return 42;
+        }
+        function gun() {
+            return new Promise(function(resolve, reject){
+                if (Math.random() < 0.5)
+                    reject("something is wrong!");
+                return resolve(42);
+            });
+        }
+        try{
+            let result = fun();
+            console.log(result);
+        } catch (e) {
+            console.error(e);
+        }
+        sun().then(function(result){
+            console.log(result);
+        }).catch(function(e){
+            console.error(e);
+        })
+        sun().then((result) => { // lambda expression, arrow function
+            console.log(result);
+        }).catch((e) => {
+            console.error(e);
+        })
+        sun().then(console.log).catch(console.error)
+        async function run(){
+            return await sun();
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>

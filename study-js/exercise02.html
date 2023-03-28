@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise #2</title>
+    <script type="text/javascript">
+        // 1. Functional
+        // 2. Asynchronous
+        // 3. Event-Based
+        // 4. Object-Oriented
+        // i. HoF ii. Async / non-blocking
+        let id = setInterval(function(){
+            console.log("Hello Moon!");
+        }, 3_000);
+        console.log("After setInterval!");
+        setTimeout(function(){
+            clearInterval(id);
+        }, 15_000);
+        console.log("After setTimeout!");
+    </script>
+</head>
+<body>
+
+</body>
+</html>

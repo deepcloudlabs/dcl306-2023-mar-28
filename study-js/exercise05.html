@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 04</title>
+    <script type="text/javascript">
+        let numbers = [4, 8, 15, 16, 23, 42];
+        numbers.sort(function(x,y){return y-x;});
+        console.log(numbers);
+        let names = ["ali", "veli", "ayşe", "şule", "şima", "zehra"];
+        names.sort((u,v)=>v.localeCompare(u, "tr"));
+        console.log(names);
+        for (let name of names){
+            if(name.length === 4)
+              console.log(name);
+        }
+        names.filter( name => name.length === 4)
+        names.filter(name => name.length === 4).map( name => 1).reduce((s,u)=>s+u, 0)
+        let sumOfCubes =
+        numbers.filter( n => n%2 === 0)
+               .map( m => m**3)
+               .reduce( (s,n) => s+n, 0);
+        console.log(`sumOfCubes is ${sumOfCubes}.`)
+    </script>
+</head>
+<body>
+
+</body>
+</html>

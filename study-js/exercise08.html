@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 04</title>
+    <script type="text/javascript">
+        class Employee {
+            constructor(identity,fullname,salary,iban){
+                this.identity= identity;
+                this.fullname= fullname;
+                this.salary= salary;
+                this.iban= iban;
+                //this.increaseSalary = this.increaseSalary.bind(this);
+                //this.sayHello = this.sayHello.bind(this);
+            }
+            increaseSalary = (rate=100) => {
+                this.salary = (1+rate/100) * this.salary;
+            }
+            sayHello = () => {
+                console.log(`Hello, ${this.fullname}!`);
+            }
+        }
+        let jack = new Employee("1", "jack bauer", 100_000, "tr1");
+        jack.sayHello();
+        window.setInterval(jack.sayHello, 5_000);
+    </script>
+</head>
+<body>
+
+</body>
+</html>

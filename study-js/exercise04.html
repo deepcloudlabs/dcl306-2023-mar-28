@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 04</title>
+    <script type="text/javascript">
+        let numbers = [4, 8, 15, 16, 23, 42];
+        console.log(numbers[0]);
+        console.log(numbers[5]);
+        console.log(numbers.length);
+        for (let i=0;i<numbers.length;++i){
+            console.log(numbers[i]);
+        }
+        for (let i in numbers){
+            console.log(numbers[i]);
+        }
+        for (let number of numbers){
+            console.log(number);
+        }
+        numbers.forEach((number,i) => {
+            console.log(`${number},${i}`);
+        })
+    </script>
+</head>
+<body>
+
+</body>
+</html>

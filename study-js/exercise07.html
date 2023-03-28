@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercise 04</title>
+    <script type="text/javascript">
+        let Employee = function(identity,fullname,salary,iban){
+            this.identity= identity;
+            this.fullname= fullname;
+            this.salary= salary;
+            this.iban= iban;
+            this.increaseSalary = function(rate=100){
+                this.salary = (1+rate/100) * this.salary;
+            }
+            this.sayHello = () => {
+                console.log(`Hello, ${this.fullname}!`);
+            }
+        }
+        let jack = new Employee("1", "jack bauer", 100_000, "tr1");
+        jack.sayHello();
+        window.setInterval(jack.sayHello, 5_000);
+    </script>
+</head>
+<body>
+
+</body>
+</html>
