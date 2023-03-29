@@ -9,6 +9,7 @@ import EvaluateMove from "./component/mastermind/EvaluateMove";
 import React, {useEffect, useState} from "react";
 import createSecret from "./utils/GameUtils";
 import Move from "./model/Move";
+import {useNavigate} from "react-router-dom";
 
 function initializeGame(game) {
     game.secret = createSecret(game.level);
@@ -16,42 +17,56 @@ function initializeGame(game) {
     game.moves = [];
     game.counter = 60;
 }
-
+const initialSecret = createSecret(3);
+const initialGameState = {
+    secret: initialSecret,
+    guess: 123,
+    level: 3,
+    lives: 3,
+    tries: 0,
+    maxTries: 10,
+    moves: [],
+    counter: 60,
+    pbColorCounter: "bg-primary",
+    pbWidthCounter: "100%"
+};
 export default function MastermindHook() {
-    const [game, setGame] = useState(
-        {
-            secret: createSecret(3),
-            guess: 123,
-            level: 3,
-            lives: 3,
-            tries: 0,
-            maxTries: 10,
-            moves: [],
-            counter: 60,
-            pbColorCounter: "bg-primary",
-            pbWidthCounter: "100%"
-        });
+    const [game, setGame] = useState(initialGameState);
     const [statistics, setStatistics] = useState({
         wins: 0,
         loses: 0,
         total: 0
     });
+
+    const navigate = useNavigate();
+
     useEffect(()=>{
         const timerId = setInterval(countDown, 1_000);
         return () => {
             clearInterval(timerId);
         }
     })
+    useEffect(saveStateToLocalStorage);
+
     useEffect(()=>{
-        saveStateToLocalStorage();
-    }, [game, statistics])
+        let state = localStorage.getItem("kiraz");
+        console.log(state);
+        if (state !== null){
+            state = JSON.parse(state);
+            setGame(state.game);
+            setStatistics(state.statistics);
+        }
+        return  saveStateToLocalStorage;
+    },[]);
     function handleInputChange(e) {
         let guess = Number(e.target.value);
         setGame({...game, guess});
     }
 
     function saveStateToLocalStorage(){
-        localStorage.setItem("kiraz",JSON.stringify( {...game,...statistics}));
+        let value = JSON.stringify( {game: {...game},statistics: {...statistics}});
+        console.log(`Saving the game state (${value})to the localstorage.`)
+        localStorage.setItem("kiraz",value);
     }
 
     function countDown(){
@@ -81,14 +96,14 @@ export default function MastermindHook() {
         if (newGame.guess === newGame.secret) {
             newGame.level++;
             if (newGame.level > 10) {
-                //TODO: player wins the newGame
+                navigate("/wins");
             } else {
                 initializeGame(newGame);
                 newGame.lives++;
             }
         } else if (newGame.tries > newGame.maxTries) {
             if (newGame.lives === 0) {
-                //TODO: player loses the newGame
+                navigate("/loses");
             } else {
                 newGame.lives--;
                 initializeGame(newGame);
