@@ -40,7 +40,7 @@ class Mastermind extends React.PureComponent {
         counter--;
         // Note: this.setState is an async function
         this.setState({game: {...this.state.game, counter}}, () => {
-            console.log(`after callback: ${JSON.stringify(this.state)}`)
+            //console.log(`after callback: ${JSON.stringify(this.state)}`)
         })
     }
     initializeGame = (game) => {
@@ -50,10 +50,22 @@ class Mastermind extends React.PureComponent {
         game.counter = 60;
     }
 
+    saveStateToLocalStorage = ()=>{
+        let state = {...this.state};
+        localStorage.setItem("armut",JSON.stringify(state));
+    }
+
     countDown = () => {
-        console.log(`beginning: ${JSON.stringify(this.state)}`)
+        // console.log(`beginning: ${JSON.stringify(this.state)}`)
         let game = {...this.state.game};
         game.counter--;
+        if (game.counter <= 0){
+            this.initializeGame(game)
+            game.lives--;
+            if (game.lives === 0){
+                //TODO: player loses!
+            }
+        }
         game.pbWidthCounter = Math.round(game.counter * 5 / 3).toString().concat("%");
         if (game.counter <= 30)
             game.pbColorCounter = "bg-danger";
@@ -61,14 +73,16 @@ class Mastermind extends React.PureComponent {
             game.pbColorCounter = "bg-warning";
         else
             game.pbColorCounter = "bg-primary";
-        this.setState({game}, () => {
-            console.log(`callback: ${JSON.stringify(this.state)}`)
-        });
+        this.setState({game}, this.saveStateToLocalStorage);
     }
 
     componentDidMount() {
         this.timerId = setInterval(this.countDown, 1_000);
-
+        let state = localStorage.getItem("armut");
+        if (state !== null){
+            state = JSON.parse(state);
+            this.setState(state);
+        }
     }
 
     componentWillUnmount() {
@@ -77,7 +91,7 @@ class Mastermind extends React.PureComponent {
 
     handleInputChange = (e) => {
         let guess = Number(e.target.value);
-        this.setState({game: {...this.state.game, guess}});
+        this.setState({game: {...this.state.game, guess}}, this.saveStateToLocalStorage);
     }
 
     play = () => {
@@ -102,7 +116,7 @@ class Mastermind extends React.PureComponent {
         } else { // player has more tries
             game.moves.push(new Move(game.guess, game.secret));
         }
-        this.setState({game, statistics});
+        this.setState({game, statistics}, this.saveStateToLocalStorage);
     }
 
     render() {
