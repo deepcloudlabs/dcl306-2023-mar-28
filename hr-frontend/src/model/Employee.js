@@ -9,6 +9,13 @@ export default class Employee {
         this.birthYear = birthYear || 1990;
         this.salary = salary || 100_000;
         this.department = department || "IT";
-        this.fulltime = fulltime || true;
+        this.fulltime = fulltime || false;
+    }
+
+    update = (data) => {
+        for (let field in this){
+            if (data.hasOwnProperty(field))
+                this[field] = data[field];
+        }
     }
 }
