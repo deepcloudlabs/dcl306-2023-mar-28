@@ -1,0 +1,46 @@
+<h1>
+  {{title}}
+</h1>
+<table>
+  <tbody>
+    <tr>
+      <td>From:</td>
+      <td colspan="2"><input type="number"
+                 min="1950"
+                 max="2015"
+                 [(ngModel)]="from"/></td>
+    </tr>
+    <tr>
+      <td>To:</td>
+      <td colspan="2"><input type="number"
+                 min="1950"
+                 max="2015"
+                 [(ngModel)]="to"/></td>
+    </tr>
+    <tr>
+      <td>Genre:</td>
+      <td><select [(ngModel)]="genre">
+        <option *ngFor="let g of genres" [value]="g.name" [selected]="genre == g.name">{{g.name}}</option>
+      </select></td>
+      <td><button (click)="search()">Search</button></td>
+    </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+  <tr>
+    <th>No</th>
+    <th>Title</th>
+    <th>Year</th>
+    <th>Imdb Page</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let mov of movies; let i = index">
+      <td>{{i+1}}</td>
+      <td>{{mov.title}}</td>
+      <td>{{mov.year}}</td>
+      <td><a href="http://www.imdb.com/title/{{mov.imdb}}" target="_blank">Visit me!</a></td>
+    </tr>
+  </tbody>
+</table>

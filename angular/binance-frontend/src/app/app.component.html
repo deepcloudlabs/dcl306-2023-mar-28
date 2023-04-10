@@ -1,0 +1,45 @@
+<p></p>
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">Market Chart</h1>
+    </div>
+    <div class="card-body">
+      <div>
+        <canvas baseChart
+                width="720"
+                height="480"
+                [datasets]="market.tradesChartData"
+                [labels]="market.tradesChartLabels"
+                [options]="chartOptions"
+                [legend]="true"
+                [chartType]="'line'"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">Trade Data</h1> <span class="badge badge-success">{{market.volume | currency }}</span>
+    </div>
+    <div class="card-body">
+      <table class="table table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>No</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Volume</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let trade of market.trades; let i=index">
+          <td>{{i + 1}}</td>
+          <td>{{trade.price | currency  }}</td>
+          <td>{{trade.quantity | currency }}</td>
+          <td>{{trade.volume | currency }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

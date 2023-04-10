@@ -1,0 +1,12 @@
+<thead>
+<tr>
+  <th>No</th>
+  <th>Guess</th>
+  <th>Evaluation</th>
+</tr>
+</thead>
+<tbody>
+<tr *ngFor="let move of history; let i = index">
+  <Move [move]="move" [rowid]="i"></Move>
+</tr>
+<tbody>
